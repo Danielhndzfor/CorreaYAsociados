@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { QRCodeSVG } from 'qrcode.react';
 import { ROUTES } from '../../router/routes';
 
 // ─── SVG Icons ───────────────────────────────────────────────────────────────
@@ -54,6 +55,29 @@ const IconShare = () => (
     </svg>
 );
 
+const IconQRCode = () => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" />
+        <rect x="3" y="14" width="7" height="7" rx="1" />
+        <rect x="5" y="5" width="3" height="3" fill="currentColor" stroke="none" />
+        <rect x="16" y="5" width="3" height="3" fill="currentColor" stroke="none" />
+        <rect x="5" y="16" width="3" height="3" fill="currentColor" stroke="none" />
+        <line x1="14" y1="14" x2="14" y2="14" strokeWidth="3" strokeLinecap="round" />
+        <line x1="18" y1="14" x2="18" y2="14" strokeWidth="3" strokeLinecap="round" />
+        <line x1="21" y1="14" x2="21" y2="14" strokeWidth="3" strokeLinecap="round" />
+        <line x1="14" y1="18" x2="14" y2="18" strokeWidth="3" strokeLinecap="round" />
+        <line x1="18" y1="18" x2="18" y2="18" strokeWidth="3" strokeLinecap="round" />
+        <line x1="21" y1="21" x2="21" y2="21" strokeWidth="3" strokeLinecap="round" />
+    </svg>
+);
+
+const IconClock = () => (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10" />
+        <polyline points="12,6 12,12 16,14" />
+    </svg>
+);
+
 
 
 
@@ -94,24 +118,29 @@ const ANTONIO = {
     photo: '/Antonio2.png',
     phone: '+52 314 146 0458',
     phoneRaw: '523141460458',
-    email: 'antoniocorrea@correayasociados.com.mx',
+    email: 'contacto@correayasociados.com.mx',
     whatsapp: '523141460458',
     whatsappMsg: 'Hola Mtro. Correa, tengo una consulta sobre un caso, ¿podría brindarme orientación legal?',
     website: 'https://correayasociados.com.mx',
-    address: 'Av Paseo de las Garzas 274, Guacamayas, Chapultepec, 28219 Manzanillo, Col.',
-    addressLink: 'https://maps.app.goo.gl/V5VmPwWPwFCCKmb3A',
+    address: 'Av Paseo de las Garzas 274 int 10, Barrio 5, 28219 Manzanillo, Valle de las Garzas',
+    addressLink: 'https://maps.app.goo.gl/dBn9SW2pP148tSov6',
     facebook: 'https://www.facebook.com/share/19GDpZk6Zw/?mibextid=wwXIfr',
     linkedin: null,
     instagram: null,
     youtube: null,
 } as const;
 
+const OFFICE_HOURS = [
+    { day: 'Lunes – Sábado', time: '9:00 – 20:00 hrs', open: true },
+    { day: 'Domingo', time: 'Cerrado', open: false },
+];
+
 const PRACTICE_AREAS = [
-    { name: 'Derecho Laboral', desc: 'Contratos, litigio laboral, conflictos con trabajadores y recursos humanos', slug: 'derecho-laboral' },
-    { name: 'Derecho Familiar', desc: 'Divorcios, pensión alimenticia, custodia, sucesiones y cambios de estado civil', slug: 'derecho-familiar' },
-    { name: 'Derecho Mercantil', desc: 'Asesoría mercantil, controversias comerciales, quiebras y sociedades', slug: 'derecho-mercantil' },
-    { name: 'Derecho Civil', desc: 'Contratos civiles, responsabilidad civil, propiedad y sucesiones', slug: 'derecho-civil' },
-    { name: 'Derecho Penal', desc: 'Defensa penal, litigio federal y estatal, reparación del daño', slug: 'derecho-penal' },
+    { name: 'Derecho Laboral', desc: 'Asesoria a trabajadores y patrones, elaboración de contratos, asesoría preventiva, litigio.', slug: 'derecho-laboral' },
+    { name: 'Derecho Familiar', desc: 'Divorcios, Pension alimentación, Guarda y Custodia, Juicios sucesorios.', slug: 'derecho-familiar' },
+    { name: 'Derecho Mercantil', desc: 'Demanda de pagares, cheques, facturas, contratos mercantiles.', slug: 'derecho-mercantil' },
+    { name: 'Derecho Civil', desc: 'Contratos de compraventa, contratos de arrendamiento, contratos de comodato.', slug: 'derecho-civil' },
+    { name: 'Derecho Penal', desc: 'Asesoria y litigio, de materia penal, local y federal, prevención de delitos.', slug: 'derecho-penal' },
 ];
 
 // ─── vCard ────────────────────────────────────────────────────────────────────
@@ -144,9 +173,12 @@ function downloadVCard() {
 // ─── Component ────────────────────────────────────────────────────────────────
 export default function ModernCardPage() {
     const [copied, setCopied] = useState(false);
+    const [showQR, setShowQR] = useState(false);
     const [darkMode, setDarkMode] = useState(() => {
         const saved = localStorage.getItem('dcm-dark-mode');
-        return saved ? JSON.parse(saved) : false;
+        if (saved !== null) return JSON.parse(saved);
+        const hour = new Date().getHours();
+        return hour < 6 || hour >= 18;
     });
 
     const toggleDarkMode = () => {
@@ -180,14 +212,14 @@ export default function ModernCardPage() {
             <button
                 type="button"
                 onClick={toggleDarkMode}
-                className="dcm__theme-toggle"
+                className="dcm__theme-toggle dcm__theme-toggle--ready"
                 aria-label="Cambiar modo"
             >
                 {darkMode ? <IconSun /> : <IconMoon />}
             </button>
 
             {/* ── Cover Editorial ── */}
-            <div className="dcm__cover">
+            <div className="dcm__cover dcm__cover--ready">
                 <img src={ANTONIO.photo} alt={ANTONIO.name} className="dcm__cover-photo" />
                 <div className="dcm__cover-gradient" aria-hidden />
 
@@ -205,23 +237,38 @@ export default function ModernCardPage() {
             </div>
 
             {/* ── Cuerpo ── */}
-            <div className="dcm__body">
+            <div className="dcm__body dcm__body--ready">
 
                 {/* CTAs */}
                 <div className="dcm__ctas">
-                    <a href={`tel:${ANTONIO.phoneRaw}`} className="dcm__cta dcm__cta--phone">
-                        <span className="dcm__cta-icon"><IconPhone /></span>
-                        <span>Llamar</span>
-                    </a>
+                    <div className="dcm__ctas-row">
+                        <a href={`tel:${ANTONIO.phoneRaw}`} className="dcm__cta dcm__cta--phone">
+                            <span className="dcm__cta-icon"><IconPhone /></span>
+                            <span>Llamar</span>
+                        </a>
+                        <a
+                            href={`https://wa.me/${ANTONIO.whatsapp}?text=${encodeURIComponent(ANTONIO.whatsappMsg)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="dcm__cta dcm__cta--wa"
+                        >
+                            <span className="dcm__cta-icon"><IconWhatsApp /></span>
+                            <span>WhatsApp</span>
+                        </a>
+                    </div>
                     <a
-                        href={`https://wa.me/${ANTONIO.whatsapp}?text=${encodeURIComponent(ANTONIO.whatsappMsg)}`}
+                        href={ANTONIO.facebook}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="dcm__cta dcm__cta--wa"
+                        className="dcm__cta dcm__cta--fb"
                     >
-                        <span className="dcm__cta-icon"><IconWhatsApp /></span>
-                        <span>WhatsApp</span>
+                        <span className="dcm__cta-icon"><IconFacebook /></span>
+                        <span>Facebook</span>
                     </a>
+                    <button type="button" onClick={handleShare} className="dcm__cta dcm__cta--share">
+                        <span className="dcm__cta-icon"><IconShare /></span>
+                        <span>{copied ? 'Enlace copiado ✓' : 'Compartir tarjeta'}</span>
+                    </button>
                 </div>
 
                 {/* Información */}
@@ -243,8 +290,22 @@ export default function ModernCardPage() {
                     </div>
                 </section>
 
-                {/* Áreas de práctica */}
+                {/* Horarios */}
                 <section className="dcm__section">
+                    <p className="dcm__section-label">Horarios de atención</p>
+                    <div className="dcm__hours-list">
+                        {OFFICE_HOURS.map(({ day, time, open }) => (
+                            <div key={day} className="dcm__hours-row">
+                                <span className="dcm__hours-icon"><IconClock /></span>
+                                <span className="dcm__hours-day">{day}</span>
+                                <span className={`dcm__hours-time${open ? '' : ' dcm__hours-time--closed'}`}>{time}</span>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
+                {/* Áreas de práctica */}
+                <section className="dcm__section dcm__section--areas">
                     <p className="dcm__section-label">Áreas de práctica</p>
                     <ul className="dcm__area-list">
                         {PRACTICE_AREAS.map((area) => (
@@ -259,29 +320,52 @@ export default function ModernCardPage() {
                     </ul>
                 </section>
 
-                {/* Redes sociales */}
-                <section className="dcm__section">
-                    <p className="dcm__section-label">Redes sociales</p>
-                    <div className="dcm__social">
-                        {ANTONIO.facebook && <a href={ANTONIO.facebook} target="_blank" rel="noopener noreferrer" className="dcm__social-btn" aria-label="Facebook"><IconFacebook /></a>}
-                    </div>
-                </section>
-
                 {/* Footer */}
                 <div className="dcm__footer">
                     <button type="button" onClick={downloadVCard} className="dcm__save">
                         <IconDownload />
                         Guardar contacto
                     </button>
-                    <button type="button" onClick={handleShare} className="dcm__share" aria-label="Compartir">
-                        <IconShare />
-                        {copied ? 'Copiado ✓' : 'Compartir'}
-                    </button>
                 </div>
+
+                {/* Copyright */}
+                <p className="dcm__copyright">
+                    © 2026 Correa y Asociados S.C. · Todos los derechos reservados
+                </p>
 
             </div>
 
+            {/* ── QR flotante ── */}
+            <button
+                type="button"
+                onClick={() => setShowQR(true)}
+                className="dcm__qr-fab"
+                aria-label="Ver código QR"
+            >
+                <IconQRCode />
+            </button>
 
+            {/* ── Modal QR ── */}
+            {showQR && (
+                <div className="dcm__qr-overlay" onClick={() => setShowQR(false)}>
+                    <div className="dcm__qr-modal" onClick={e => e.stopPropagation()}>
+                        <p className="dcm__qr-title">Escanea para compartir</p>
+                        <div className="dcm__qr-code">
+                            <QRCodeSVG
+                                value={window.location.href}
+                                size={200}
+                                bgColor="#ffffff"
+                                fgColor="#0c1f38"
+                                level="M"
+                            />
+                        </div>
+                        <p className="dcm__qr-url">{window.location.host}</p>
+                        <button type="button" onClick={() => setShowQR(false)} className="dcm__qr-close">
+                            Cerrar
+                        </button>
+                    </div>
+                </div>
+            )}
 
         </div>
     );

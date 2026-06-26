@@ -1,67 +1,41 @@
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../../../router/routes';
+import { ArrowRight } from 'lucide-react';
+import { SERVICES_DATA } from '../../../data/services';
 
-// TODO: Mover a src/data/services.ts o conectar con CMS/API
-export const SERVICES = [
-    {
-        slug: 'consulta-legal',
-        title: 'Consulta Legal',
-        icon: '📋',
-        description: 'Asesoría personalizada para evaluar tu situación y orientarte con claridad.',
-    },
-    {
-        slug: 'contratos',
-        title: 'Contratos',
-        icon: '📝',
-        description: 'Redacción y revisión de contratos civiles, mercantiles y laborales.',
-    },
-    {
-        slug: 'litigios',
-        title: 'Litigios',
-        icon: '⚖️',
-        description: 'Representación estratégica en procesos judiciales y arbitrajes.',
-    },
-    {
-        slug: 'derecho-empresarial',
-        title: 'Derecho Empresarial',
-        icon: '🏢',
-        description: 'Constitución de empresas, compliance y asesoría corporativa.',
-    },
-    {
-        slug: 'derecho-familiar',
-        title: 'Derecho de Familia',
-        icon: '👨‍👩‍👧',
-        description: 'Divorcios, custodia, sucesiones y asuntos familiares con sensibilidad.',
-    },
-] as const;
+// Re-export for backward compatibility
+export const SERVICES = SERVICES_DATA;
 
 export default function ServicesSection() {
-    return (
-        <section id="servicios" className="section services">
-            <div className="container">
-                <div className="section__header">
-                    <span className="section__tag">Lo que hacemos</span>
-                    <h2 className="section__title">Nuestros servicios</h2>
-                    <p className="section__desc">
-                        Cobertura legal integral para personas físicas y morales.
-                    </p>
-                </div>
+  return (
+    <section id="servicios" className="section services">
+      <div className="container">
+        <div className="section__header">
+          <span className="section__tag">Áreas de práctica</span>
+          <h2 className="section__title">Soluciones legales integrales</h2>
+          <p className="section__desc">
+            Cobertura jurídica completa para personas físicas y morales en Manzanillo y todo Colima.
+          </p>
+        </div>
 
-                <div className="services__grid">
-                    {SERVICES.map((service) => (
-                        <Link
-                            key={service.slug}
-                            to={ROUTES.serviceDetail(service.slug)}
-                            className="service-card"
-                        >
-                            <span className="service-card__icon">{service.icon}</span>
-                            <h3 className="service-card__title">{service.title}</h3>
-                            <p className="service-card__desc">{service.description}</p>
-                            <span className="service-card__cta">Ver más →</span>
-                        </Link>
-                    ))}
-                </div>
-            </div>
-        </section>
-    );
+        <div className="services__grid">
+          {SERVICES_DATA.map(({ slug, title, image, description }) => (
+            <Link key={slug} to={ROUTES.serviceDetail(slug)} className="service-card">
+              <div className="service-card__img-wrap">
+                <img src={image} alt={title} className="service-card__img" />
+              </div>
+              <div className="service-card__body">
+                <h3 className="service-card__title">{title}</h3>
+                <p className="service-card__desc">{description}</p>
+              </div>
+              <span className="service-card__cta">
+                Ver detalle
+                <ArrowRight size={14} strokeWidth={2} />
+              </span>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 }

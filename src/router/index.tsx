@@ -9,6 +9,10 @@ const UnderConstruction = lazy(
   () => import('../pages/UnderConstruction/UnderConstruction'),
 );
 const HomePage = lazy(() => import('../pages/Home/HomePage'));
+const AboutPage = lazy(() => import('../pages/About/AboutPage'));
+const ServicesPage = lazy(() => import('../pages/Services/ServicesPage'));
+const FAQPage = lazy(() => import('../pages/FAQ/FAQPage'));
+const ContactPage = lazy(() => import('../pages/Contact/ContactPage'));
 const ServiceDetailPage = lazy(
   () => import('../pages/ServiceDetail/ServiceDetailPage'),
 );
@@ -30,12 +34,7 @@ const wrap = (node: React.ReactNode) => (
 // ─── Router ───────────────────────────────────────────────────────────────────
 export const router = createBrowserRouter([
   {
-    // Ruta 1: En Construcción
-    path: ROUTE_PATTERNS.UNDER_CONSTRUCTION,
-    element: wrap(<UnderConstruction />),
-  },
-  {
-    // Ruta 2: Página Principal (con Navbar/Footer compartidos)
+    // Ruta principal: layout compartido (Navbar + Footer)
     path: ROUTE_PATTERNS.HOME,
     element: <MainLayout />,
     children: [
@@ -44,19 +43,38 @@ export const router = createBrowserRouter([
         element: wrap(<HomePage />),
       },
       {
-        // Vista de detalle de servicio
+        path: ROUTE_PATTERNS.HOME_ABOUT,
+        element: wrap(<AboutPage />),
+      },
+      {
+        path: ROUTE_PATTERNS.HOME_SERVICES,
+        element: wrap(<ServicesPage />),
+      },
+      {
+        path: ROUTE_PATTERNS.HOME_FAQ,
+        element: wrap(<FAQPage />),
+      },
+      {
+        path: ROUTE_PATTERNS.HOME_CONTACT,
+        element: wrap(<ContactPage />),
+      },
+      {
         path: ROUTE_PATTERNS.HOME_SERVICE_DETAIL,
         element: wrap(<ServiceDetailPage />),
       },
       {
-        // Formulario de solicitud de servicio
         path: ROUTE_PATTERNS.HOME_SERVICE_FORM,
         element: wrap(<ServiceFormPage />),
       },
     ],
   },
   {
-    // Ruta 3b: Tarjeta Moderna — Lic. Antonio Correa (editorial)
+    // Página en construcción (accesible pero no es la raíz)
+    path: ROUTE_PATTERNS.UNDER_CONSTRUCTION,
+    element: wrap(<UnderConstruction />),
+  },
+  {
+    // Tarjeta Moderna — Lic. Antonio Correa
     path: ROUTE_PATTERNS.DIGITAL_CARD_MODERN,
     element: wrap(<ModernCardPage />),
   },
